@@ -18,6 +18,33 @@ class Perfil(object):
 	def obter_curtidas(self):
 		return self.__curtidas
 
+class PerfilVip(Perfil):
+	'Classe com perfil de usuarios Vip'
+
+	def __init__(self, nome, telefone, empresa, apelido):
+		super(PerfilVip, self).__init__(nome, telefone, empresa)
+		self.apelido = apelido
+
+	def obter_creditos(self):
+		return super(PerfilVip, self).obter_curtidas() * 10.0
+
+
+class Conta(object):
+	def __init__(self, titular, saldo):
+		self.titular = titular
+		self.saldo = saldo
+
+	def calcular_imposto(self):
+		self.saldo = self.saldo * 0.10
+		return self.saldo
+
+class ContaCorrente(Conta):
+	def __init__(self, titular, saldo):
+		super(ContaCorrente, self).__init__(titular, saldo)
+
+	def calcular_imposto(self):
+		return super(ContaCorrente,self).calcular_imposto() + 20
+
 
 class Data(object):
 
