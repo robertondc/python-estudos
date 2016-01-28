@@ -4,6 +4,8 @@ class Perfil(object):
 	'Classe de usuario'
 
 	def __init__(self, nome, telefone, empresa):
+		if (len(nome) < 3):
+			raise ArgumentoInvalidoError('Nome deve ter pelo menos 3 caracteres')
 		self.nome = nome
 		self.telefone = telefone
 		self.empresa = empresa
@@ -20,14 +22,23 @@ class Perfil(object):
 
 	@classmethod
 	def gerar_perfis(nome_classe,nome_arquivo):
-		arquivo = open(nome_arquivo, 'r')
-		perfis = []
-		for linha in arquivo:
-			valores = linha.split(',')
-			perfis.append(nome_classe(*valores))
-		arquivo.close()
-		return perfis
-
+		arquivo = None
+		try:
+			arquivo = open(nome_arquivo, 'r')
+			perfis = []
+			for linha in arquivo:
+				valores = linha.split(',')
+				if (len(valores) is not 3):
+					raise ValueError('A linha "%s" deve conter 3 valores' % (linha))
+				perfis.append(nome_classe(*valores))
+			arquivo.close()
+			return perfis
+		except (IOError, TypeError) as erro:
+			print('FERROU!! Erro: %s') % (erro)
+		finally:
+			if (arquivo is not None):
+				print('fechando arquivo')
+				arquivo.close()
 
 class PerfilVip(Perfil):
 	'Classe com perfil de usuarios Vip'
@@ -38,6 +49,13 @@ class PerfilVip(Perfil):
 
 	def obter_creditos(self):
 		return super(PerfilVip, self).obter_curtidas() * 10.0
+
+class ArgumentoInvalidoError(Exception):
+	def __init__(self, mensagem):
+		self.mensagem = mensagem
+
+	def __str__(self):
+		return rpr(self.mensagem)
 
 
 class Conta(object):
